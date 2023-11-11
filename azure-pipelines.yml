@@ -8,28 +8,28 @@ steps:
 
 - task: AzureCLI@2
   inputs:
-    azureSubscription: 'Towards-AzurePortal'
+    azureSubscription: 'To Azure connection'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      docker build -t mylabacr13.azurecr.io/web-game:tag 2048-game
-      az acr login -n mylabacr13
-      docker push mylabacr13.azurecr.io/web-game:tag
+      docker build -t crgameapp.azurecr.io/web-game:tag 2048-game
+      az acr login -n crgameapp
+      docker push crgameapp.azurecr.io/web-game:tag
 
 - script: cat 01_kubernetes_aks/app-deploy.yaml
 
 - task: Kubernetes@1
   inputs:
     connectionType: 'Azure Resource Manager'
-    azureSubscriptionEndpoint: 'Towards-AzurePortal'
-    azureResourceGroup: 'TestLab-RG'
-    kubernetesCluster: 'testlab-aks'
+    azureSubscriptionEndpoint: 'To Azure connection'
+    azureResourceGroup: 'rg-game-app'
+    kubernetesCluster: 'AKSgameApp'
     namespace: 'default'
     command: 'apply'
     useConfigurationFile: true
     configuration: '01_kubernetes_aks'
     secretType: 'dockerRegistry'
     containerRegistryType: 'Azure Container Registry'
-    azureSubscriptionEndpointForSecrets: 'Towards-AzurePortal'
-    azureContainerRegistry: 'mylabacr13.azurecr.io'
+    azureSubscriptionEndpointForSecrets: 'To Azure connection'
+    azureContainerRegistry: 'crgameapp.azurecr.io'
     forceUpdate: false
